@@ -4,80 +4,82 @@
 #include <stdbool.h>
 
 struct Node {
-    union {
-        // I wish I could think of a better name for this
-        uintptr_t PxorN_int;
-        struct Node *previousXORnext;
-    };
+    uintptr_t PxorN; // Previous XOR Next
     uint64_t data;
 };
 
 struct List {
     union {
-        // Another bad name
-        uintptr_t current_int;
         struct Node *current;
+        uintptr_t current_int;
     };
-    uintptr_t currentXORnext;
+    uintptr_t bucket; // Current XOR previous
+    union {
+        // Allocating 'hanger' ahead of time allows use to
+        // use 'insert' without having to check if list is empty.
+        struct Node *hanger;
+        uintptr_t hanger_int;
+    };
 };
 
-bool move(struct List *list)
+void moveLeft(struct List *list)
 {
-    // make sure we're not facing end of list
-    if (list->currentXORnext == list->current_int)
-        return 0;
-
-    list->current_int ^= list->currentXORnext;
-    list->currentXORnext ^= list->current->PxorN_int;
-
-    return 1;
+    list->current_int ^= list->bucket;
+    list->bucket ^= list->current->PxorN;
 }
 
-void reverseMoveDirection(struct List *list)
+void moveRight(struct List *list)
 {
-    list->currentXORnext ^= list->current->PxorN_int;
+    list->bucket ^= list->current->PxorN;
+    list->current_int ^= list->bucket;
+}
+
+void reverse(struct List *list)
+{// TODO: Make it to where the two 'moveRight' functions are unnecessary
+    moveRight(list);
+    moveRight(list);
+    list->bucket ^= list->current->PxorN;
+}
+
+void insert(struct List *list, uint64_t data)
+{
+    list->hanger->data = data;
+
+    list->hanger->PxorN = list->bucket;
+    list->bucket ^= list->current_int ^ list->hanger_int ^ list->hanger->PxorN;
+    list->current->PxorN ^= list->current_int ^ list->hanger_int ^ list->hanger->PxorN;
+    list->hanger_int = list->hanger->PxorN ^ list->current_int;
+    list->hanger->PxorN ^= list->bucket;
+
+    list->hanger = calloc(sizeof(struct Node), 1);
 }
 
 int main()
 {
-    struct List list = { 0 };
-    {// manually craft XOR list
-        struct Node *a = calloc(sizeof(struct Node), 1);
-        a->data = 50;
+    struct List list;
+    // Allocate ahead of time
+    list.hanger = calloc(sizeof(struct List), 1);
+    list.current = list.hanger;
 
-        struct Node *b = calloc(sizeof(struct Node), 1);
-        b->data = 55;
-
-        struct Node *c = calloc(sizeof(struct Node), 1);
-        c->data = 60;
-
-        struct Node *d = calloc(sizeof(struct Node), 1);
-        d->data = 65;
-
-        struct Node *e = calloc(sizeof(struct Node), 1);
-        e->data = 70;
-
-        a->previousXORnext = b;
-        b->PxorN_int = (uintptr_t)a ^ (uintptr_t)c;
-        c->PxorN_int = (uintptr_t)b ^ (uintptr_t)d;
-        d->PxorN_int = (uintptr_t)c ^ (uintptr_t)e;
-        e->previousXORnext = d;
-
-        list.current = a;
-        list.currentXORnext = list.current_int ^ (uintptr_t)b;
-    }
+    insert(&list, 30);
+    insert(&list, 35);
+    insert(&list, 40);
+    insert(&list, 45);
+    insert(&list, 50);
 
     printf("printing list...\n");
-    for (int i = 0; i < 5; i++) {
+    printf("%lu\n", list.current->data);
+    for (int i = 0; i < 14; i++) {
+        moveRight(&list);
         printf("%lu\n", list.current->data);
-        move(&list);
     }
 
     printf("\nreversing direction...\n");
-    reverseMoveDirection(&list);
+    reverse(&list);
 
-    for (int i = 0; i < 5; i++) {
+    moveRight(&list);
+    for (int i = 0; i < 14; i++) {
+        moveRight(&list);
         printf("%lu\n", list.current->data);
-        move(&list);
     }
 }
