@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
 
 struct Node {
     uintptr_t PxorN; // Previous XOR Next
@@ -50,14 +49,14 @@ void insert(struct List *list, uint64_t data)
     SWAP(list->previous, list->hanger_int);
     list->hanger->PxorN ^= list->current_int ^ list->previous;
 
-    list->hanger = calloc(sizeof(struct Node), 1);
+    list->hanger = (Node*)calloc(sizeof(struct Node), 1);
 }
 
 int main()
 {
     struct List list;
     // Allocate ahead of time
-    list.hanger = calloc(sizeof(struct List), 1);
+    list.hanger = (Node*)calloc(sizeof(struct List), 1);
     list.current = list.hanger;
     list.previous = (uintptr_t) list.current;
 
