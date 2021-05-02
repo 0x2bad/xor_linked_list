@@ -12,11 +12,17 @@ union _Node {
     struct Node *ptr;
 };
 
-struct List {
+class List {
+public:
     List();
     ~List();
+    void moveLeft();
+    void moveRight();
+    void reverse();
+    void insert(uint64_t data);
     bool deleteNode();
     union _Node current;
+private:
     union _Node previous;
     // Allocating 'hanger' ahead of time allows us to
     // use 'insert' without having to check if list is empty.

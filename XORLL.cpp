@@ -19,33 +19,33 @@ List::~List()
 
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
-void moveLeft(struct List *list)
+void List::moveLeft()
 {
-    SWAP(list->previous.uintptr, list->current.uintptr);
-    list->previous.uintptr ^= list->current.ptr->PxorN;
+    SWAP(this->previous.uintptr, this->current.uintptr);
+    this->previous.uintptr ^= this->current.ptr->PxorN;
 }
 
-void moveRight(struct List *list)
+void List::moveRight()
 {
-    list->previous.uintptr ^= list->current.ptr->PxorN;
-    SWAP(list->previous.uintptr, list->current.uintptr);
+    this->previous.uintptr ^= this->current.ptr->PxorN;
+    SWAP(this->previous.uintptr, this->current.uintptr);
 }
 
-void reverse(struct List *list)
+void List::reverse()
 {
-    list->previous.uintptr ^= list->current.ptr->PxorN;
+    this->previous.uintptr ^= this->current.ptr->PxorN;
 }
 
-void insert(struct List *list, uint64_t data)
+void List::insert(uint64_t data)
 {
-    list->hanger.ptr->data = data;
+    this->hanger.ptr->data = data;
 
-    list->hanger.ptr->PxorN = list->previous.uintptr ^ list->current.uintptr;
-    list->current.ptr->PxorN ^= list->previous.uintptr ^ list->hanger.uintptr;
-    SWAP(list->previous.uintptr, list->hanger.uintptr);
-    list->hanger.ptr->PxorN ^= list->current.uintptr ^ list->previous.uintptr;
+    this->hanger.ptr->PxorN = this->previous.uintptr ^ this->current.uintptr;
+    this->current.ptr->PxorN ^= this->previous.uintptr ^ this->hanger.uintptr;
+    SWAP(this->previous.uintptr, this->hanger.uintptr);
+    this->hanger.ptr->PxorN ^= this->current.uintptr ^ this->previous.uintptr;
 
-    list->hanger.ptr = (Node*)calloc(sizeof(struct Node), 1);
+    this->hanger.ptr = (Node*)calloc(sizeof(struct Node), 1);
 }
 
 bool List::deleteNode()
@@ -64,27 +64,26 @@ bool List::deleteNode()
 
 int main()
 {
-    struct List list;
+    class List list;
 
-    insert(&list, 30);
-    insert(&list, 35);
-    insert(&list, 40);
-    insert(&list, 45);
-    insert(&list, 50);
+    list.insert(30);
+    list.insert(35);
+    list.insert(40);
+    list.insert(45);
+    list.insert(50);
 
     while (list.deleteNode())
         ;
 
-    insert(&list, 30);
-    insert(&list, 35);
-    insert(&list, 40);
-    insert(&list, 45);
-    insert(&list, 50);
+    list.insert(30);
+    list.insert(35);
+    list.insert(40);
+    list.insert(45);
+    list.insert(50);
 
     printf("printing list 3 times...\n");
     for (int i = 0; i < 15; i++) {
         printf("%lu\n", list.current.ptr->data);
-        moveRight(&list);
+        list.moveRight();
     }
 }
-
