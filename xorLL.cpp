@@ -6,7 +6,7 @@
 
 List::List()
 {
-    this->hanger.ptr = (Node*)calloc(sizeof(struct List), 1);
+    this->hanger.ptr = (Node*) calloc(sizeof(struct List), 1);
     this->current.ptr = this->hanger.ptr;
     this->previous.ptr = this->current.ptr;
 }
@@ -45,7 +45,7 @@ void List::insert(uint64_t data)
     SWAP(this->previous.uintptr, this->hanger.uintptr);
     this->hanger.ptr->PxorN ^= this->current.uintptr ^ this->previous.uintptr;
 
-    this->hanger.ptr = (Node*)calloc(sizeof(struct Node), 1);
+    this->hanger.ptr = (Node*) malloc(sizeof(struct Node));
 }
 
 bool List::isEmpty()
