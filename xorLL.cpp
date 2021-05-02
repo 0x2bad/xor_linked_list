@@ -48,10 +48,15 @@ void List::insert(uint64_t data)
     this->hanger.ptr = (Node*)calloc(sizeof(struct Node), 1);
 }
 
+bool List::isEmpty()
+{
+    return (this->hanger.ptr == this->current.ptr);
+}
+
 bool List::deleteNode()
 {
-    if (this->hanger.ptr == this->current.ptr)
-        return 0; // empty
+    if (isEmpty())
+        return 0;
 
     free(this->hanger.ptr);
     this->hanger.ptr = this->current.ptr;

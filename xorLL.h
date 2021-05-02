@@ -20,6 +20,7 @@ public:
     void moveRight();
     void reverse();
     void insert(uint64_t data);
+    bool isEmpty();
     bool deleteNode();
     uint64_t getData() const;
 private:
