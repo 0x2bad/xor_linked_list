@@ -13,43 +13,42 @@ struct List {
         struct Node *current;
         uintptr_t current_int;
     };
-    uintptr_t bucket; // Current XOR previous
+    uintptr_t previous;
     union {
-        // Allocating 'hanger' ahead of time allows use to
+        // Allocating 'hanger' ahead of time allows us to
         // use 'insert' without having to check if list is empty.
         struct Node *hanger;
         uintptr_t hanger_int;
     };
 };
 
+#define SWAP(a, b) a ^= b, b ^= a, a ^= b
+
 void moveLeft(struct List *list)
 {
-    list->current_int ^= list->bucket;
-    list->bucket ^= list->current->PxorN;
+    SWAP(list->previous, list->current_int);
+    list->previous ^= list->current->PxorN;
 }
 
 void moveRight(struct List *list)
 {
-    list->bucket ^= list->current->PxorN;
-    list->current_int ^= list->bucket;
+    list->previous ^= list->current->PxorN;
+    SWAP(list->previous, list->current_int);
 }
 
 void reverse(struct List *list)
-{// TODO: Make it to where the two 'moveRight' functions are unnecessary
-    moveRight(list);
-    moveRight(list);
-    list->bucket ^= list->current->PxorN;
+{
+    list->previous ^= list->current->PxorN;
 }
 
 void insert(struct List *list, uint64_t data)
 {
     list->hanger->data = data;
 
-    list->hanger->PxorN = list->bucket;
-    list->bucket ^= list->current_int ^ list->hanger_int ^ list->hanger->PxorN;
-    list->current->PxorN ^= list->current_int ^ list->hanger_int ^ list->hanger->PxorN;
-    list->hanger_int = list->hanger->PxorN ^ list->current_int;
-    list->hanger->PxorN ^= list->bucket;
+    list->hanger->PxorN = list->previous ^ list->current_int;
+    list->current->PxorN ^= list->previous ^ list->hanger_int;
+    SWAP(list->previous, list->hanger_int);
+    list->hanger->PxorN ^= list->current_int ^ list->previous;
 
     list->hanger = calloc(sizeof(struct Node), 1);
 }
@@ -60,6 +59,7 @@ int main()
     // Allocate ahead of time
     list.hanger = calloc(sizeof(struct List), 1);
     list.current = list.hanger;
+    list.previous = (uintptr_t) list.current;
 
     insert(&list, 30);
     insert(&list, 35);
@@ -67,19 +67,9 @@ int main()
     insert(&list, 45);
     insert(&list, 50);
 
-    printf("printing list...\n");
-    printf("%lu\n", list.current->data);
-    for (int i = 0; i < 14; i++) {
-        moveRight(&list);
+    printf("printing list 3 times...\n");
+    for (int i = 0; i < 15; i++) {
         printf("%lu\n", list.current->data);
-    }
-
-    printf("\nreversing direction...\n");
-    reverse(&list);
-
-    moveRight(&list);
-    for (int i = 0; i < 14; i++) {
         moveRight(&list);
-        printf("%lu\n", list.current->data);
     }
 }
