@@ -6,9 +6,9 @@
 
 List::List()
 {
-    this->hanger = (Node*)calloc(sizeof(struct List), 1);
-    this->current = this->hanger;
-    this->previous = this->current;
+    this->hanger.ptr = (Node*)calloc(sizeof(struct List), 1);
+    this->current.ptr = this->hanger.ptr;
+    this->previous.ptr = this->current.ptr;
 }
 
 List::~List()
@@ -21,43 +21,43 @@ List::~List()
 
 void moveLeft(struct List *list)
 {
-    SWAP(list->previous_int, list->current_int);
-    list->previous_int ^= list->current->PxorN;
+    SWAP(list->previous.uintptr, list->current.uintptr);
+    list->previous.uintptr ^= list->current.ptr->PxorN;
 }
 
 void moveRight(struct List *list)
 {
-    list->previous_int ^= list->current->PxorN;
-    SWAP(list->previous_int, list->current_int);
+    list->previous.uintptr ^= list->current.ptr->PxorN;
+    SWAP(list->previous.uintptr, list->current.uintptr);
 }
 
 void reverse(struct List *list)
 {
-    list->previous_int ^= list->current->PxorN;
+    list->previous.uintptr ^= list->current.ptr->PxorN;
 }
 
 void insert(struct List *list, uint64_t data)
 {
-    list->hanger->data = data;
+    list->hanger.ptr->data = data;
 
-    list->hanger->PxorN = list->previous_int ^ list->current_int;
-    list->current->PxorN ^= list->previous_int ^ list->hanger_int;
-    SWAP(list->previous_int, list->hanger_int);
-    list->hanger->PxorN ^= list->current_int ^ list->previous_int;
+    list->hanger.ptr->PxorN = list->previous.uintptr ^ list->current.uintptr;
+    list->current.ptr->PxorN ^= list->previous.uintptr ^ list->hanger.uintptr;
+    SWAP(list->previous.uintptr, list->hanger.uintptr);
+    list->hanger.ptr->PxorN ^= list->current.uintptr ^ list->previous.uintptr;
 
-    list->hanger = (Node*)calloc(sizeof(struct Node), 1);
+    list->hanger.ptr = (Node*)calloc(sizeof(struct Node), 1);
 }
 
 bool List::deleteNode()
 {
-    if (this->hanger == this->current)
+    if (this->hanger.ptr == this->current.ptr)
         return 0; // empty
 
-    free(this->hanger);
-    this->hanger = this->current;
-    this->current_int = this->current->PxorN ^ this->previous_int;
-    this->current->PxorN ^= this->hanger_int ^ this->previous_int;
-    this->previous->PxorN ^= this->hanger_int ^ this->current_int;
+    free(this->hanger.ptr);
+    this->hanger.ptr = this->current.ptr;
+    this->current.uintptr = this->current.ptr->PxorN ^ this->previous.uintptr;
+    this->current.ptr->PxorN ^= this->hanger.uintptr ^ this->previous.uintptr;
+    this->previous.ptr->PxorN ^= this->hanger.uintptr ^ this->current.uintptr;
 
     return 1;
 }
@@ -72,7 +72,7 @@ int main()
     insert(&list, 45);
     insert(&list, 50);
 
-    while (list.delete_node())
+    while (list.deleteNode())
         ;
 
     insert(&list, 30);
@@ -83,7 +83,8 @@ int main()
 
     printf("printing list 3 times...\n");
     for (int i = 0; i < 15; i++) {
-        printf("%lu\n", list.current->data);
+        printf("%lu\n", list.current.ptr->data);
         moveRight(&list);
     }
 }
+

@@ -7,22 +7,18 @@ struct Node {
     uint64_t data;
 };
 
+union _Node {
+    uintptr_t uintptr;
+    struct Node *ptr;
+};
+
 struct List {
     List();
     ~List();
-    bool delete_node();
-    union {
-        struct Node *current;
-        uintptr_t current_int;
-    };
-    union {
-        uintptr_t previous_int;
-        struct Node *previous;
-    };
-    union {
-        // Allocating 'hanger' ahead of time allows us to
-        // use 'insert' without having to check if list is empty.
-        struct Node *hanger;
-        uintptr_t hanger_int;
-    };
+    bool deleteNode();
+    union _Node current;
+    union _Node previous;
+    // Allocating 'hanger' ahead of time allows us to
+    // use 'insert' without having to check if list is empty.
+    union _Node hanger;
 };
