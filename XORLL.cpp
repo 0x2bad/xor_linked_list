@@ -2,24 +2,14 @@
 #include <cstdlib>
 #include <cstdint>
 
-struct Node {
-    uintptr_t PxorN; // Previous XOR Next
-    uint64_t data;
-};
+#include "XORLL.h"
 
-struct List {
-    union {
-        struct Node *current;
-        uintptr_t current_int;
-    };
-    uintptr_t previous;
-    union {
-        // Allocating 'hanger' ahead of time allows us to
-        // use 'insert' without having to check if list is empty.
-        struct Node *hanger;
-        uintptr_t hanger_int;
-    };
-};
+List::List()
+{
+    this->hanger = (Node*)calloc(sizeof(struct List), 1);
+    this->current = this->hanger;
+    this->previous = (uintptr_t) this->current;
+}
 
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
