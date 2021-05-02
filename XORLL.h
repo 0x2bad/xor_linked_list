@@ -21,10 +21,11 @@ public:
     void reverse();
     void insert(uint64_t data);
     bool deleteNode();
-    union _Node current;
+    uint64_t getData() const;
 private:
+    union _Node current;
     union _Node previous;
-    // Allocating 'hanger' ahead of time allows us to
-    // use 'insert' without having to check if list is empty.
+    // Allocating 'hanger' ahead of time allows us to use
+    // 'List::insert()' without having to check if list is empty.
     union _Node hanger;
 };

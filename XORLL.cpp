@@ -62,6 +62,11 @@ bool List::deleteNode()
     return 1;
 }
 
+uint64_t List::getData() const
+{
+    return this->current.ptr->data;
+}
+
 int main()
 {
     class List list;
@@ -83,7 +88,7 @@ int main()
 
     printf("printing list 3 times...\n");
     for (int i = 0; i < 15; i++) {
-        printf("%lu\n", list.current.ptr->data);
+        printf("%llu\n", list.getData());
         list.moveRight();
     }
 }
