@@ -21,18 +21,9 @@ public:
     uint64_t getData() const;
 private:
     uint64_t *cursorCount;
-    union {
-        Node *current;
-        uintptr_t currentX;
-    };
-    union {
-        Node *previous;
-        uintptr_t previousX;
-    };
     // Allocating 'hanger' ahead of time allows us to use
     // 'List::insert()' without having to check if list is empty.
-    union {
-        Node *hanger;
-        uintptr_t hangerX;
-    };
+    union { Node *hanger;   uintptr_t hangerX;   };
+    union { Node *current;  uintptr_t currentX;  };
+    union { Node *previous; uintptr_t previousX; };
 };
