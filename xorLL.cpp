@@ -6,15 +6,28 @@
 
 List::List()
 {
+    this->cursorCount = (uint64_t*) malloc(sizeof(uint64_t));
+    *this->cursorCount = 1;
     this->hanger.ptr = (Node*) calloc(sizeof(struct List), 1);
     this->current.ptr = this->hanger.ptr;
     this->previous.ptr = this->current.ptr;
 }
 
+List::List(const List &c)
+{
+    this->cursorCount = c.cursorCount;
+    (*cursorCount)++;
+
+    this->hanger.ptr = c.hanger.ptr;
+    this->current.ptr = c.current.ptr;
+    this->previous.ptr = c.previous.ptr;
+}
+
 List::~List()
 {
-    while(deleteNode())
-    { /* keep deleting until empty */ }
+    if (--(*cursorCount) == 0)
+        while(deleteNode())
+        { /* keep deleting until empty */ }
 }
 
 void List::reverse()
@@ -53,7 +66,7 @@ bool List::isEmpty()
     return (this->hanger.ptr == this->current.ptr);
 }
 
-bool List::deleteNode()
+uint8_t List::deleteNode()
 {
     if (isEmpty())
         return 0;

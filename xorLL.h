@@ -15,15 +15,17 @@ union _Node {
 class List {
 public:
     List();
+    List(const List &);
     ~List();
     void reverse();
     void moveLeft();
     void moveRight();
     void insert(uint64_t data);
     bool isEmpty();
-    bool deleteNode();
+    uint8_t deleteNode();
     uint64_t getData() const;
 private:
+    uint64_t *cursorCount;
     union _Node current;
     union _Node previous;
     // Allocating 'hanger' ahead of time allows us to use

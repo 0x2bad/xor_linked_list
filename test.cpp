@@ -4,26 +4,34 @@
 
 int main()
 {
-    class List list;
+    class List cursor1;
 
-    list.insert(30);
-    list.insert(35);
-    list.insert(40);
-    list.insert(45);
-    list.insert(50);
+    cursor1.insert(30);
+    cursor1.insert(35);
+    cursor1.insert(40);
+    cursor1.insert(45);
+    cursor1.insert(50);
 
-    while (list.deleteNode())
+    while (cursor1.deleteNode())
         ;
 
-    list.insert(30);
-    list.insert(35);
-    list.insert(40);
-    list.insert(45);
-    list.insert(50);
+    cursor1.insert(30);
+    cursor1.insert(35);
+    cursor1.insert(40);
+    cursor1.insert(45);
+    cursor1.insert(50);
 
     printf("printing list 3 times...\n");
     for (int i = 0; i < 15; i++) {
-        printf("%llu\n", list.getData());
-        list.moveRight();
+        printf("%llu\n", cursor1.getData());
+        cursor1.moveRight();
+    }
+
+    class List cursor2 = cursor1;
+
+    printf("printing list 3 times from new cursor\n");
+    for (int i = 0; i < 15; i++) {
+        printf("%llu\n", cursor2.getData());
+        cursor2.moveLeft();
     }
 }
