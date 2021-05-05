@@ -7,11 +7,6 @@ struct Node {
     uint64_t data;
 };
 
-union _Node {
-    uintptr_t uintptr;
-    struct Node *ptr;
-};
-
 class List {
 public:
     List();
@@ -26,9 +21,18 @@ public:
     uint64_t getData() const;
 private:
     uint64_t *cursorCount;
-    union _Node current;
-    union _Node previous;
+    union {
+        Node *current;
+        uintptr_t currentX;
+    };
+    union {
+        Node *previous;
+        uintptr_t previousX;
+    };
     // Allocating 'hanger' ahead of time allows us to use
     // 'List::insert()' without having to check if list is empty.
-    union _Node hanger;
+    union {
+        Node *hanger;
+        uintptr_t hangerX;
+    };
 };

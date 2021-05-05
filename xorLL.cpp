@@ -8,9 +8,9 @@ List::List()
 {
     cursorCount = (uint64_t*) malloc(sizeof(uint64_t));
     *cursorCount = 1;
-    hanger.ptr = (Node*) calloc(sizeof(struct List), 1);
-    current.ptr = hanger.ptr;
-    previous.ptr = current.ptr;
+    hanger = (Node*) calloc(sizeof(struct List), 1);
+    current = hanger;
+    previous = current;
 }
 
 List::List(const List &c)
@@ -18,9 +18,9 @@ List::List(const List &c)
     cursorCount = c.cursorCount;
     (*cursorCount)++;
 
-    hanger.ptr = c.hanger.ptr;
-    current.ptr = c.current.ptr;
-    previous.ptr = c.previous.ptr;
+    hanger = c.hanger;
+    current = c.current;
+    previous = c.previous;
 }
 
 List::~List()
@@ -32,38 +32,38 @@ List::~List()
 
 void List::reverse()
 {
-    previous.uintptr ^= current.ptr->PxorN;
+    previousX ^= current->PxorN;
 }
 
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
 void List::moveLeft()
 {
-    SWAP(previous.uintptr, current.uintptr);
+    SWAP(previousX, currentX);
     reverse();
 }
 
 void List::moveRight()
 {
     reverse();
-    SWAP(previous.uintptr, current.uintptr);
+    SWAP(previousX, currentX);
 }
 
 void List::insert(uint64_t data)
 {
-    hanger.ptr->data = data;
+    hanger->data = data;
 
-    hanger.ptr->PxorN = previous.uintptr ^ current.uintptr;
-    current.ptr->PxorN ^= previous.uintptr ^ hanger.uintptr;
-    SWAP(previous.uintptr, hanger.uintptr);
-    hanger.ptr->PxorN ^= current.uintptr ^ previous.uintptr;
+    hanger->PxorN = previousX ^ currentX;
+    current->PxorN ^= previousX ^ hangerX;
+    SWAP(previousX, hangerX);
+    hanger->PxorN ^= currentX ^ previousX;
 
-    hanger.ptr = (Node*) malloc(sizeof(struct Node));
+    hanger = (Node*) malloc(sizeof(struct Node));
 }
 
 bool List::isEmpty()
 {
-    return (hanger.ptr == current.ptr);
+    return (hanger == current);
 }
 
 uint8_t List::deleteNode()
@@ -71,17 +71,17 @@ uint8_t List::deleteNode()
     if (isEmpty())
         return 0;
 
-    free(hanger.ptr);
-    hanger.ptr = current.ptr;
-    current.uintptr = current.ptr->PxorN ^ previous.uintptr;
-    current.ptr->PxorN ^= hanger.uintptr ^ previous.uintptr;
-    previous.ptr->PxorN ^= hanger.uintptr ^ current.uintptr;
+    free(hanger);
+    hanger = current;
+    currentX = current->PxorN ^ previousX;
+    current->PxorN ^= hangerX ^ previousX;
+    previous->PxorN ^= hangerX ^ currentX;
 
     return 1;
 }
 
 uint64_t List::getData() const
 {
-    return current.ptr->data;
+    return current->data;
 }
 
