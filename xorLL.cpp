@@ -6,21 +6,21 @@
 
 List::List()
 {
-    this->cursorCount = (uint64_t*) malloc(sizeof(uint64_t));
-    *this->cursorCount = 1;
-    this->hanger.ptr = (Node*) calloc(sizeof(struct List), 1);
-    this->current.ptr = this->hanger.ptr;
-    this->previous.ptr = this->current.ptr;
+    cursorCount = (uint64_t*) malloc(sizeof(uint64_t));
+    *cursorCount = 1;
+    hanger.ptr = (Node*) calloc(sizeof(struct List), 1);
+    current.ptr = hanger.ptr;
+    previous.ptr = current.ptr;
 }
 
 List::List(const List &c)
 {
-    this->cursorCount = c.cursorCount;
+    cursorCount = c.cursorCount;
     (*cursorCount)++;
 
-    this->hanger.ptr = c.hanger.ptr;
-    this->current.ptr = c.current.ptr;
-    this->previous.ptr = c.previous.ptr;
+    hanger.ptr = c.hanger.ptr;
+    current.ptr = c.current.ptr;
+    previous.ptr = c.previous.ptr;
 }
 
 List::~List()
@@ -32,38 +32,38 @@ List::~List()
 
 void List::reverse()
 {
-    this->previous.uintptr ^= this->current.ptr->PxorN;
+    previous.uintptr ^= current.ptr->PxorN;
 }
 
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
 void List::moveLeft()
 {
-    SWAP(this->previous.uintptr, this->current.uintptr);
+    SWAP(previous.uintptr, current.uintptr);
     reverse();
 }
 
 void List::moveRight()
 {
     reverse();
-    SWAP(this->previous.uintptr, this->current.uintptr);
+    SWAP(previous.uintptr, current.uintptr);
 }
 
 void List::insert(uint64_t data)
 {
-    this->hanger.ptr->data = data;
+    hanger.ptr->data = data;
 
-    this->hanger.ptr->PxorN = this->previous.uintptr ^ this->current.uintptr;
-    this->current.ptr->PxorN ^= this->previous.uintptr ^ this->hanger.uintptr;
-    SWAP(this->previous.uintptr, this->hanger.uintptr);
-    this->hanger.ptr->PxorN ^= this->current.uintptr ^ this->previous.uintptr;
+    hanger.ptr->PxorN = previous.uintptr ^ current.uintptr;
+    current.ptr->PxorN ^= previous.uintptr ^ hanger.uintptr;
+    SWAP(previous.uintptr, hanger.uintptr);
+    hanger.ptr->PxorN ^= current.uintptr ^ previous.uintptr;
 
-    this->hanger.ptr = (Node*) malloc(sizeof(struct Node));
+    hanger.ptr = (Node*) malloc(sizeof(struct Node));
 }
 
 bool List::isEmpty()
 {
-    return (this->hanger.ptr == this->current.ptr);
+    return (hanger.ptr == current.ptr);
 }
 
 uint8_t List::deleteNode()
@@ -71,17 +71,17 @@ uint8_t List::deleteNode()
     if (isEmpty())
         return 0;
 
-    free(this->hanger.ptr);
-    this->hanger.ptr = this->current.ptr;
-    this->current.uintptr = this->current.ptr->PxorN ^ this->previous.uintptr;
-    this->current.ptr->PxorN ^= this->hanger.uintptr ^ this->previous.uintptr;
-    this->previous.ptr->PxorN ^= this->hanger.uintptr ^ this->current.uintptr;
+    free(hanger.ptr);
+    hanger.ptr = current.ptr;
+    current.uintptr = current.ptr->PxorN ^ previous.uintptr;
+    current.ptr->PxorN ^= hanger.uintptr ^ previous.uintptr;
+    previous.ptr->PxorN ^= hanger.uintptr ^ current.uintptr;
 
     return 1;
 }
 
 uint64_t List::getData() const
 {
-    return this->current.ptr->data;
+    return current.ptr->data;
 }
 
