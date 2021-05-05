@@ -17,23 +17,23 @@ List::~List()
     { /* keep deleting until empty */ }
 }
 
+void List::reverse()
+{
+    this->previous.uintptr ^= this->current.ptr->PxorN;
+}
+
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
 void List::moveLeft()
 {
     SWAP(this->previous.uintptr, this->current.uintptr);
-    this->previous.uintptr ^= this->current.ptr->PxorN;
+    reverse();
 }
 
 void List::moveRight()
 {
-    this->previous.uintptr ^= this->current.ptr->PxorN;
+    reverse();
     SWAP(this->previous.uintptr, this->current.uintptr);
-}
-
-void List::reverse()
-{
-    this->previous.uintptr ^= this->current.ptr->PxorN;
 }
 
 void List::insert(uint64_t data)

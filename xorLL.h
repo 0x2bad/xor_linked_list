@@ -16,9 +16,9 @@ class List {
 public:
     List();
     ~List();
+    void reverse();
     void moveLeft();
     void moveRight();
-    void reverse();
     void insert(uint64_t data);
     bool isEmpty();
     bool deleteNode();
