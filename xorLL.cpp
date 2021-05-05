@@ -66,7 +66,7 @@ bool List::isEmpty()
     return (hanger == current);
 }
 
-uint8_t List::deleteNode()
+bool List::deleteNode()
 {
     if (isEmpty())
         return 0;

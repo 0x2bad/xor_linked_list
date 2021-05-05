@@ -17,7 +17,7 @@ public:
     void moveRight();
     void insert(uint64_t data);
     bool isEmpty();
-    uint8_t deleteNode();
+    bool deleteNode();
     uint64_t getData() const;
 private:
     uint64_t *cursorCount;
