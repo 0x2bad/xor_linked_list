@@ -25,9 +25,11 @@ List::List(const List &c)
 
 List::~List()
 {
-    if (--(*cursorCount) == 0)
+    if (--(*cursorCount) == 0) {
+        free(cursorCount);
         while(deleteNode())
         { /* keep deleting until empty */ }
+    }
 }
 
 void List::reverse()
