@@ -26,9 +26,10 @@ List::List(const List &c)
 List::~List()
 {
     if (--(*cursorCount) == 0) {
-        free(cursorCount);
         while(deleteNode())
         { /* keep deleting until empty */ }
+        free(cursorCount);
+        free(hanger);
     }
 }
 
