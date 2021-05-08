@@ -35,7 +35,7 @@ private:
     union { Node *previous; uintptr_t previousX; };
     void swap(struct List& first, struct List& second)
     {
-        SWAP(first.currentX, second.currentX);
+        SWAP(first.cursorCountX, second.cursorCountX);
         SWAP(first.hangerX, second.hangerX);
         SWAP(first.currentX, second.currentX);
         SWAP(first.previousX, second.previousX);
