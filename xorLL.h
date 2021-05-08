@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cstdint>
 
+#define SWAP(a, b) a ^= b, b ^= a, a ^= b
+
 struct Node {
     uintptr_t PxorN; // Previous XOR Next
     uint64_t data;
@@ -11,7 +13,11 @@ struct Node {
 class List {
 public:
     List();
+    // copy constructor
     List(const List &);
+    List& operator=(List c);
+    // move-constructor
+    List(List&& c) noexcept;
     ~List();
     void reverse();
     void moveLeft();
@@ -21,12 +27,19 @@ public:
     bool deleteNode();
     uint64_t getData() const;
 private:
-    uint64_t *cursorCount;
+    union { uint64_t *cursorCount; uintptr_t cursorCountX; };
     // Allocating 'hanger' ahead of time allows us to use
     // 'List::insert()' without having to check if list is empty.
     union { Node *hanger;   uintptr_t hangerX;   };
     union { Node *current;  uintptr_t currentX;  };
     union { Node *previous; uintptr_t previousX; };
+    friend void swap(struct List& first, struct List& second)
+    {
+        SWAP(first.currentX, second.currentX);
+        SWAP(first.hangerX, second.hangerX);
+        SWAP(first.currentX, second.currentX);
+        SWAP(first.previousX, second.previousX);
+    }
 };
 
 List::List()
@@ -38,7 +51,7 @@ List::List()
     previous = current;
 }
 
-List::List(const List &c)
+List::List(const List& c)
 {
     cursorCount = c.cursorCount;
     (*cursorCount)++;
@@ -46,6 +59,21 @@ List::List(const List &c)
     hanger = c.hanger;
     current = c.current;
     previous = c.previous;
+}
+
+// TODO: Figure out how this works
+// https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
+// TODO: Run tests on overloaded assignment and move-constructor
+List& List::operator=(List c)
+{ 
+    swap(*this, c);
+    return *this;
+}
+
+List::List(List&& c) noexcept
+{
+    List();
+    swap(*this, c);
 }
 
 List::~List()
@@ -63,7 +91,6 @@ inline void List::reverse()
     previousX ^= current->PxorN;
 }
 
-#define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
 inline void List::moveLeft()
 {

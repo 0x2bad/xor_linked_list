@@ -4,6 +4,7 @@
 
 int main()
 {
+    // constructor 
     class List cursor1;
 
     cursor1.insert(30);
@@ -27,6 +28,7 @@ int main()
         cursor1.moveRight();
     }
 
+    // copy constructor
     class List cursor2 = cursor1;
 
     printf("printing list 3 times from new cursor\n");
@@ -34,4 +36,9 @@ int main()
         printf("%llu\n", cursor2.getData());
         cursor2.moveLeft();
     }
+
+    cursor2.moveLeft();
+
+    // assignment overload
+    cursor2 = cursor1;
 }
