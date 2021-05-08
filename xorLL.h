@@ -33,7 +33,7 @@ private:
     union { Node *hanger;   uintptr_t hangerX;   };
     union { Node *current;  uintptr_t currentX;  };
     union { Node *previous; uintptr_t previousX; };
-    friend void swap(struct List& first, struct List& second)
+    void swap(struct List& first, struct List& second)
     {
         SWAP(first.currentX, second.currentX);
         SWAP(first.hangerX, second.hangerX);
