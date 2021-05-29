@@ -5,11 +5,13 @@
 
 #define SWAP(a, b) a ^= b, b ^= a, a ^= b
 
+template <typename T>
 struct Node {
     uintptr_t PxorN; // Previous XOR Next
-    uint64_t data;
+    T data;
 };
 
+template <typename T>
 class List {
 public:
     List();
@@ -22,17 +24,17 @@ public:
     void reverse();
     void moveLeft();
     void moveRight();
-    void insert(uint64_t data);
+    void insert(T data);
     bool isEmpty();
     bool deleteNode();
-    uint64_t getData() const;
+    T getData() const;
 private:
     union { uint64_t *cursorCount; uintptr_t cursorCountX; };
     // Allocating 'hanger' ahead of time allows us to use
     // 'List::insert()' without having to check if list is empty.
-    union { Node *hanger;   uintptr_t hangerX;   };
-    union { Node *current;  uintptr_t currentX;  };
-    union { Node *previous; uintptr_t previousX; };
+    union { Node <T>*hanger;   uintptr_t hangerX;   };
+    union { Node <T>*current;  uintptr_t currentX;  };
+    union { Node <T>*previous; uintptr_t previousX; };
     void swap(struct List& first, struct List& second)
     {
         SWAP(first.cursorCountX, second.cursorCountX);
@@ -42,16 +44,18 @@ private:
     }
 };
 
-List::List()
+template <typename T>
+List<T>::List()
 {
-    cursorCount = (uint64_t*) malloc(sizeof(uint64_t));
+    cursorCount = (T*) malloc(sizeof(T));
     *cursorCount = 1;
-    hanger = (Node*) calloc(sizeof(struct List), 1);
+    hanger = (Node <T>*) calloc(sizeof(struct List), 1);
     current = hanger;
     previous = current;
 }
 
-List::List(const List& c)
+template <typename T>
+List<T>::List(const List& c)
 {
     cursorCount = c.cursorCount;
     (*cursorCount)++;
@@ -64,19 +68,22 @@ List::List(const List& c)
 // TODO: Figure out how this works
 // https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 // TODO: Run tests on overloaded assignment and move-constructor
-List& List::operator=(List c)
+template <typename T>
+List<T>& List<T>::operator=(List c)
 { 
     swap(*this, c);
     return *this;
 }
 
-List::List(List&& c) noexcept
+template <typename T>
+List<T>::List(List<T>&& c) noexcept
 {
     List();
     swap(*this, c);
 }
 
-List::~List()
+template <typename T>
+List<T>::~List()
 {
     if (--(*cursorCount) == 0) {
         while(deleteNode())
@@ -86,25 +93,29 @@ List::~List()
     }
 }
 
-inline void List::reverse()
+template <typename T>
+inline void List<T>::reverse()
 {
     previousX ^= current->PxorN;
 }
 
 
-inline void List::moveLeft()
+template <typename T>
+inline void List<T>::moveLeft()
 {
     SWAP(previousX, currentX);
     reverse();
 }
 
-inline void List::moveRight()
+template <typename T>
+inline void List<T>::moveRight()
 {
     reverse();
     SWAP(previousX, currentX);
 }
 
-inline void List::insert(uint64_t data)
+template <typename T>
+inline void List<T>::insert(T data)
 {
     hanger->data = data;
 
@@ -113,15 +124,17 @@ inline void List::insert(uint64_t data)
     SWAP(previousX, hangerX);
     hanger->PxorN ^= currentX ^ previousX;
 
-    hanger = (Node*) malloc(sizeof(struct Node));
+    hanger = (Node<T>*) malloc(sizeof(struct Node<T>));
 }
 
-inline bool List::isEmpty()
+template <typename T>
+inline bool List<T>::isEmpty()
 {
     return (hanger == current);
 }
 
-inline bool List::deleteNode()
+template <typename T>
+inline bool List<T>::deleteNode()
 {
     if (isEmpty())
         return 0;
@@ -135,7 +148,8 @@ inline bool List::deleteNode()
     return 1;
 }
 
-inline uint64_t List::getData() const
+template <typename T>
+inline T List<T>::getData() const
 {
     return current->data;
 }

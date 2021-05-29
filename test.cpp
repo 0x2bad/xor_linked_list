@@ -5,7 +5,7 @@
 int main()
 {
     // constructor 
-    class List cursor1;
+    class List<uint64_t> cursor1;
 
     cursor1.insert(30);
     cursor1.insert(35);
@@ -27,9 +27,8 @@ int main()
         printf("%llu\n", cursor1.getData());
         cursor1.moveRight();
     }
-
     // copy constructor
-    class List cursor2 = cursor1;
+    class List<uint64_t> cursor2 = cursor1;
 
     printf("printing list 3 times from new cursor\n");
     for (int i = 0; i < 15; i++) {
